@@ -1,0 +1,18 @@
+# Ignore the following folders
+[Ll]ibrary/
+[Tt]emp/
+[Tt]argets/
+# Ignore build results
+[Bb]uild/
+[Bb]uilds/
+# Ignore Unity-generated folders for auto-generated files
+.idea/
+.vscode/
+# Ignore user-specific files
+*.userprefs
+# Ignore log files
+*.log
+# Ignore crash dumps
+crash.dmp
+# Ignore .DS_Store files on macOS
+.DS_Store
