@@ -6,11 +6,17 @@ public class Movement : MonoBehaviour
     public CharacterController controller;
     
     //movement variables 
-    public float speed = 20f;
-    public float gravity = -1000f; //I want a stronger pull down
-    public float jumpHeight = 20f;
+    public float speed = 70f;
+    public float fastSpeed = 80f;
+    public float gravity = -20000f; //need it to pull down wayyy stronger
+    public float jumpHeight = 100f;
     Vector3 velocity;
     bool isGrounded;
+
+    //detecting the "w" double tap for speed variables
+    private float firstPressTime = 0;
+    private float timeBetweenTaps = 0.2f; 
+    private bool isSprinting = false;
     
 
     void Start()
@@ -28,28 +34,61 @@ public class Movement : MonoBehaviour
         {
             velocity.y = -2f; // normal velocity when on ground
         }
+
+
+        //checking for the double tap of "w" key
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            //if the user taps between the time given above (0.3)
+            if (Time.time - firstPressTime < timeBetweenTaps) 
+            {
+                //they will sprint!
+                isSprinting = true;
+            }
+            firstPressTime = Time.time;
+        }
         
+
+
         //get input for movement
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
         
+        //change the speed according to if the player is sprinting
+        float currentSpeed;
+        if (isSprinting)
+        {
+            currentSpeed = fastSpeed;
+        }
+        else
+        {
+            currentSpeed = speed;
+        }
+
+
 
         //use input to turn into direction (in the way that the player is facing)
-
         Vector3 move = transform.right * x + transform.forward * z;
 
-        controller.Move(move * speed * Time.deltaTime);
+        controller.Move(move * currentSpeed * Time.deltaTime);
+
 
         //impliment the jump - if space key is pressed and player is on the ground...
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity); //some math equation to jump in the air
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity) * 5; //equation to find velocity to reach that height
+        }
+
+        //stoping the sprint
+        if (Input.GetKeyUp(KeyCode.W))
+        {
+            isSprinting = false;
         }
 
 
         //applying gravity
 
-        velocity.y += gravity * Time.deltaTime;
+        velocity.y += gravity * 10f * Time.deltaTime; //making the gravity stronger
 
         controller.Move(velocity * Time.deltaTime);
     }
